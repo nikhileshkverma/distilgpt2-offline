@@ -1,144 +1,154 @@
-Sure! Here’s the full **README.md** in one code block for easy copy-paste on GitHub:
+Absolutely! Here's a complete README in GitHub markdown format — designed **from scratch** — so anyone cloning your repo can follow it step-by-step to run DistilGPT2 fully offline.
+
+---
 
 ````markdown
-# DistilGPT-2 Offline Setup and Usage
+# DistilGPT2 Offline Setup
 
-This repository shows how to set up and run the DistilGPT-2 model offline with PyTorch and Hugging Face Transformers.
-
----
-
-## Table of Contents
-
-- [Prerequisites](#prerequisites)  
-- [Setup Environment](#setup-environment)  
-- [Install Required Packages](#install-required-packages)  
-- [Download and Save Model Locally](#download-and-save-model-locally)  
-- [Run Offline Model](#run-offline-model)  
-- [Common Errors & Fixes](#common-errors--fixes)  
-- [Push to GitHub](#push-to-github)  
+Welcome to the **first fully offline method to use DistilGPT2**!  
+This repository demonstrates how to download, save, and run the DistilGPT2 model entirely offline — no internet required after initial setup.
 
 ---
 
-## Prerequisites
+## Overview
 
-- Ubuntu or Linux-based OS (tested on Ubuntu 22.04+)  
-- Python 3.10  
-- Git installed  
+The Hugging Face Transformers library typically downloads models and tokenizers from the internet on demand.  
+This repo shows how to pre-download everything, save it locally, and run the model offline in a Python virtual environment.
+
+**Why offline?**  
+- No internet connection needed after setup  
+- Full control over model files  
+- Privacy and security for sensitive use cases  
+- Faster repeated inference
 
 ---
 
-## Setup Environment
+## Step-by-Step Setup Guide (From Scratch)
+
+### 1. Install system dependencies
+
+Make sure you have Python 3.10+ installed (tested with 3.10.14) and `git`:
 
 ```bash
-mkdir distilgpt2_offline && cd distilgpt2_offline
-python3 -m venv venv
-source venv/bin/activate
+sudo apt update
+sudo apt install python3.10 python3.10-venv python3-pip git -y
 ````
 
----
+### 2. Clone this repository
 
-## Install Required Packages
+```bash
+git clone https://github.com/nikhileshkverma/distilgpt2-offline.git
+cd distilgpt2-offline
+```
+
+### 3. Create and activate a virtual environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 4. Install Python dependencies
 
 ```bash
 pip install --upgrade pip
-pip install torch==2.2.2+cu121 numpy==1.26.4 transformers==4.22.0
+pip install torch transformers numpy==1.26.4
 ```
 
-> **Note:**
->
-> * Downgrade numpy to 1.26.4 to fix `_ARRAY_API not found` warning
-> * Install matching Torch version for CUDA 12.1 support
+> **Note:** Specifying `numpy==1.26.4` avoids runtime warnings with PyTorch.
 
----
+### 5. Download and save the DistilGPT2 model and tokenizer locally
 
-## Download and Save Model Locally
+Run Python shell:
+
+```bash
+python3
+```
+
+Then execute:
 
 ```python
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 model_name = "distilgpt2"
+
+# Download and save tokenizer and model locally
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name)
 
 tokenizer.save_pretrained("./distilgpt2")
 model.save_pretrained("./distilgpt2")
+
+exit()
 ```
 
----
+This will save the model and tokenizer files under the `./distilgpt2` folder in your repo.
 
-## Run Offline Model
+### 6. Run the offline generation script
 
-Create `offline_run.py` with:
+Create a Python script `offline_run.py` with the following content:
 
 ```python
 from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
 
 tokenizer = AutoTokenizer.from_pretrained("./distilgpt2")
 model = AutoModelForCausalLM.from_pretrained("./distilgpt2")
 
-input_text = "Once upon a time"
-inputs = tokenizer(input_text, return_tensors="pt")
+# Example prompt
+prompt = "Once upon a time of war,"
 
+inputs = tokenizer(prompt, return_tensors="pt")
+
+# Pass attention_mask to avoid warning
 outputs = model.generate(
     **inputs,
     max_length=50,
-    pad_token_id=tokenizer.eos_token_id,
-    attention_mask=inputs['attention_mask']
+    pad_token_id=tokenizer.eos_token_id
 )
 
 print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 ```
 
-Run:
+Run it:
 
 ```bash
 python offline_run.py
 ```
 
----
-
-## Common Errors & Fixes
-
-* **\_ARRAY\_API not found warning**
-  Fix by downgrading numpy:
-
-  ```bash
-  pip install numpy==1.26.4
-  ```
-
-* **Attention mask and pad token id warning**
-  Always pass `attention_mask` and `pad_token_id` in generation (see code above).
-
-* **GitHub push 403 error**
-  Use a GitHub Personal Access Token (PAT) for HTTPS authentication or set up SSH keys.
-  See: [https://docs.github.com/en/authentication](https://docs.github.com/en/authentication)
+You should see generated text output without requiring an internet connection.
 
 ---
 
-## Push to GitHub
+## Troubleshooting
 
-```bash
-git init
-git add .
-git commit -m "Initial offline DistilGPT-2 setup"
-git branch -M main
-git remote add origin https://github.com/nikhileshkverma/distilgpt2-offline.git
-git push -u origin main
-```
+* **PyTorch warning about NumPy:**
+  If you get warnings related to NumPy, ensure you installed `numpy==1.26.4` as shown above.
 
-> Enter your GitHub Personal Access Token when prompted for password.
+* **Authentication errors pushing to GitHub:**
+  Use a [Personal Access Token (PAT)](https://github.com/settings/tokens) instead of your password when pushing to GitHub.
+
+---
+
+## Contribution & Feedback
+
+Feel free to open issues or submit PRs to improve this offline setup!
 
 ---
 
 ## License
 
-MIT License
+This project is licensed under the MIT License.
 
 ---
 
-*Created by Nikhilesh K Verma*
+## Author
 
-```
+Nikhilesh K Verma — pioneering offline usage of DistilGPT2
+[GitHub Profile](https://github.com/nikhileshkverma)
 
-Just copy-paste this entire block into your `README.md` file on GitHub or locally!
+---
+
+Thank you for using this offline DistilGPT2 repository! 🚀
+
 ```
