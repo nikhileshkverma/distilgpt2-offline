@@ -152,3 +152,15 @@ Nikhilesh K Verma — pioneering offline usage of DistilGPT2
 Thank you for using this offline DistilGPT2 repository! 🚀
 
 ```
+---
+
+## Acknowledgements
+
+This offline setup was inspired by and adapted from the original work found at:
+
+- **Original Repository**: [huggingface/transformers](https://github.com/huggingface/transformers) — for the core model and tokenizer codebase
+- **Reproduced and modified for a fully offline environment.
+
+Special thanks to their open-source work that made offline LLMs possible. 🙌
+
+
